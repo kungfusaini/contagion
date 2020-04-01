@@ -1,0 +1,23 @@
+#BlueJ class context
+comment0.target=Person
+comment0.text=\n\ A\ person\ in\ a\ virus\ simulation\n\ \n\ @author\ Sumeet\ Saini\n\ @version\ 1.00\n
+comment1.params=
+comment1.target=Person()
+comment1.text=\n\ Initialize\ a\ person\ with\ a\ random\ movement\ direction\n
+comment2.params=
+comment2.target=void\ act()
+comment2.text=\n\ Act\ -\ do\ whatever\ the\ Person\ wants\ to\ do.\ This\ method\ is\ called\ whenever\n\ the\ 'Act'\ or\ 'Run'\ button\ gets\ pressed\ in\ the\ environment.\n
+comment3.params=
+comment3.target=void\ movement()
+comment3.text=\n\ The\ person's\ movement\ behaviour\n
+comment4.params=
+comment4.target=void\ infect()
+comment4.text=\n\ Infect\ the\ actor\ and\ changes\ it's\ display\ image\n
+comment5.params=
+comment5.target=boolean\ isInfected()
+comment6.params=
+comment6.target=void\ spread()
+comment6.text=\n\ If\ touching\ another\ actor,\ infect\ them\n
+comment7.params=
+comment7.target=void\ heal()
+numComments=8

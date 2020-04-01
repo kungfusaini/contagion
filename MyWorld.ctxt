@@ -1,0 +1,10 @@
+#BlueJ class context
+comment0.target=MyWorld
+comment0.text=\n\ The\ world\ of\ the\ Virus\ Simulation\n\ \n\ @author\ Sumeet\ Saini\ \n\ @version\ 1.00\n
+comment1.params=
+comment1.target=MyWorld()
+comment1.text=\n\ Create\ the\ world\ and\ populate\ it\n\ \n
+comment2.params=
+comment2.target=void\ populate()
+comment2.text=\n\ Populate\ the\ world\ based\ on\ the\ screen\ size\n\ and\ defined\ population\n
+numComments=3
