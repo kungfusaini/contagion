@@ -12,6 +12,7 @@ public class Person extends Actor
     private int turnChance = 20;
     private int infection = 0;
     private static final int INFECTION_TIME = 200;  
+    private boolean isImmune = false;
     
     /**
      * Initialize a person with a random movement direction
@@ -29,8 +30,8 @@ public class Person extends Actor
       movement();
       if(isInfected()){
           spread();
+          heal();
       }
-      heal();
     } 
     
     /**
@@ -56,8 +57,11 @@ public class Person extends Actor
      * Infect the actor and changes it's display image
      */
     public void infect(){
-        infection = INFECTION_TIME;
-        setImage("infected.png");
+        if(!isImmune){
+            infection = INFECTION_TIME;
+            setImage("infected.png");
+            isImmune = true;
+        }
     }
     
     private boolean isInfected(){
@@ -80,7 +84,9 @@ public class Person extends Actor
     private void heal(){
         if (isInfected()){
             infection--;
+            if(infection == 0){
+                setImage("immune.png");
+            }
         }
-        
     }
 }
