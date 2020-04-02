@@ -9,8 +9,6 @@ import java.util.ArrayList;
 
 public class DiseaseChart extends LineChart{
 
-
-
     //Lines in the line chart
     private XYChart.Series seriesInfected;
     private XYChart.Series seriesRecovered;
@@ -45,42 +43,32 @@ public class DiseaseChart extends LineChart{
 
         seriesDeaths.getData().add(new XYChart.Data(0, 0));  ///Set (0, 0) as initial value
         getData().add(seriesDeaths);
-
-        /**
-         * Set the line of deaths to be black
-         * The legend does not get updated
-         */
-        seriesDeaths.getNode().setStyle("-fx-stroke: #000000; -fx-text-fill: #000000");
+        changeColors();
 
     }
 
-
-
-
+    /**
+     * Set the line of deaths to be black
+     * The legend does not get updated
+     */
+    private void changeColors() {
+        seriesDeaths.getNode().setStyle("-fx-stroke: #000000; -fx-text-fill: #000000");
+        seriesRecovered.getNode().setStyle("-fx-stroke: #14f000; -fx-text-fill: #14f000");
+        seriesInfected.getNode().setStyle("-fx-stroke: #f50600; -fx-text-fill: #f50600");
+    }
 
     /**
      * This method updates the values in the chart
      * Gets the state of each person individually, then it adds
      * them in the chart.
      */
-    public void updateValues(ArrayList<Person> list) {
-        int dead = 0;
-        int recovered = 0;
-        int infected = 0;
-
-        for (Person person : list) {
-            String state = person.getState();
-
-            if (state.equals("recovered")) recovered++;
-            else if (state.equals("infected")) infected++;
-            else if (state.equals("dead")) dead++;
-        }
+    public void updateValues(int infected,int recovered,int dead) {
 
         seriesDeaths.getData().add(new XYChart.Data(index, dead));
         seriesInfected.getData().add(new XYChart.Data(index, infected));
         seriesRecovered.getData().add(new XYChart.Data(index, recovered));
 
-        //Increases the index of the x axis
+        //Increases the index of the x-axis
         index++;
     }
 }

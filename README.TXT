@@ -3,10 +3,7 @@ Contagion!
 Code availble to edit, seperate GUI added.
 
  * Improvements:
- *      -Chance line chart colors
- *
- *      -updateValues() makes a for each loop for all the persons that checks the status every second
- *       this can be improved by having counters in the class Person and get the them by a method.
+ *       -Update Legend
  *
  *      -Add a probability of infection so in the future it can be changed to different values. Note:
  *       when two people meet, the method meet gets called multiple times, this could affect the probability.

@@ -44,6 +44,7 @@ public class Person extends Circle {
      * You also have to change it in the super() in the constructor, it doesn't let reference this one
      */
     private double radius = 2;
+
     /**
      * This object
      * Has to be added here, otherwise it wouldn/t be possible to check collision
@@ -80,6 +81,12 @@ public class Person extends Circle {
 
         //Starts the movement
         addMovement();
+    }
+
+    //Empty constructor for test Person
+    public Person()
+    {
+        //do nothing
     }
 
     /**
@@ -148,17 +155,19 @@ public class Person extends Circle {
     private void finalDisease() {
         //This person won't be able to get infected gain
         setCantGetInfected();
-
+        counterInfectedPeople--;
         //Checks if this person survives according to the disease class
         if (disease.getIsDead()) {
             alive = false;
             //Stop moving
             timeline.stop();
             //Set the color of the person to black
-            this.setFill(Color.BLACK);
+            setFill(Color.BLACK);
+            counterDeadPeople++;
         } else {
             //If survives set the color to green.
-            this.setFill(Color.GREEN);
+            setFill(Color.rgb(20,240,0));
+            counterRecoveredPeople++;
         }
         //No longer has a disease
         disease = null;
@@ -230,7 +239,7 @@ public class Person extends Circle {
         counterInfectedPeople++;
         disease = new Disease();
         //Set the person color to red
-        this.setFill(javafx.scene.paint.Color.RED);
+        this.setFill(javafx.scene.paint.Color.rgb(245,6,0));
     }
 
     /**
@@ -256,7 +265,7 @@ public class Person extends Circle {
 
     /**
      * Checks the state of this person
-     * @return
+     * @return state state
      */
     public String getState(){
         if(alive && !canGetInfected) return "recovered";
@@ -264,5 +273,18 @@ public class Person extends Circle {
         else if(!alive) return "dead";
         //Returns an empty string if this person is healthy and has never got the disease
         else return "";
+    }
+
+    public static int getInfected()
+        {
+            return counterInfectedPeople;
+        }
+
+    public static int getRecovered() {
+        return counterRecoveredPeople;
+    }
+
+    public static int getDead() {
+        return counterDeadPeople;
     }
 }

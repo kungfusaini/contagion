@@ -8,24 +8,6 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Improvements:
- * -Chance line chart colors
- * <p>
- * -updateValues() makes a for each loop for all the persons that checks the status every second
- * this can be improved by having counters in the class Person and get the them by a method.
- * <p>
- * -Add a probability of infection so in the future it can be changed to different values. Note:
- * when two people meet, the method meet gets called multiple times, this could affect the probability.
- * When a person A meets person B, both can get infected, when person B meets person A in its object, both
- * will get infected again, this will increase the probability and has to be changed.
- * <p>
- * -When someone is infected it will stop his movement, but just from day 5 of infection.
- * <p>
- * -Some people don't get the symptoms, therefore, as they are not aware, the will keep moving.
- * <p>
- * -Make the possibility to set a lockdown, so a % of the population won't move at all.
- */
 
 /**
  * This class creates the pane where simulation will be hold
@@ -44,6 +26,9 @@ public class MyWorld extends Application {
 
     //List of all persons
     private ArrayList<Person> populationList;
+
+    //Create a person to access Static count methods
+    Person person = new Person();
 
     //Chart to display disease information
     private DiseaseChart diseaseChart;
@@ -88,7 +73,7 @@ public class MyWorld extends Application {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    diseaseChart.updateValues(populationList);
+                    diseaseChart.updateValues(Person.getInfected(), Person.getRecovered(), Person.getDead());
                 }
             }
         });
