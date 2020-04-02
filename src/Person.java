@@ -23,12 +23,13 @@ import java.util.Random;
 public class Person extends Circle {
     //Array that contains all persons
     private static ArrayList<Person> persons = new ArrayList<>();
-    //Boolean that it' true while simulating
+    //Boolean that's true while simulating
     private static boolean simulating = true;
     //Counters
     private static int counterInfectedPeople;
     private static int counterRecoveredPeople;
     private static int counterDeadPeople;
+
     //Pane where it will be added to
     private Pane background;
 
@@ -142,14 +143,14 @@ public class Person extends Circle {
     }
 
     /**
-     * Decides what will happen once the disease has a arrived to its last day
+     * Decides what will happen once the disease has arrived to its last day
      */
     private void finalDisease() {
         //This person won't be able to get infected gain
         setCantGetInfected();
 
         //Checks if this person survives according to the disease class
-        if (disease.getDead()) {
+        if (disease.getIsDead()) {
             alive = false;
             //Stop moving
             timeline.stop();
