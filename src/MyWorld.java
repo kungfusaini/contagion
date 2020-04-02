@@ -1,5 +1,6 @@
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.scene.chart.NumberAxis;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -8,22 +9,44 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * Improvements:
+ * -Chance line chart colors
+ * <p>
+ * -updateValues() makes a for each loop for all the persons that checks the status every second
+ * this can be improved by having counters in the class Person and get the them by a method.
+ * <p>
+ * -Add a probability of infection so in the future it can be changed to different values. Note:
+ * when two people meet, the method meet gets called multiple times, this could affect the probability.
+ * When a person A meets person B, both can get infected, when person B meets person A in its object, both
+ * will get infected again, this will increase the probability and has to be changed.
+ * <p>
+ * -When someone is infected it will stop his movement, but just from day 5 of infection.
+ * <p>
+ * -Some people don't get the symptoms, therefore, as they are not aware, the will keep moving.
+ * <p>
+ * -Make the possibility to set a lockdown, so a % of the population won't move at all.
+ */
+
+/**
  * This class creates the pane where simulation will be hold
  *
  * @author Oussama Rakye
  * @author Sumeet Saini 
  * @version 2.00
  */
-public class MyWorld extends Application
-{
-    /**
-     * Population of the simulation.
-     * Note: if you increase the number of the population you might have to increase TIME_STEP_MILLISECONDS, so your computer can handle it
-     */
+
+public class MyWorld extends Application {
+
+    //Population of the simulation.
+    //Note: if you increase the number of the population you might have to increase TIME_STEP_MILLISECONDS, so
+    //your computer can handle it
     private static final int POPULATION = 400;
 
     //List of all persons
-    private ArrayList<Person> list;
+    private ArrayList<Person> populationList;
+
+    //Chart to display disease information
+    private DiseaseChart diseaseChart;
 
     //Size of the screen
     public static final int PANE_WIDTH = 1500;
@@ -32,17 +55,24 @@ public class MyWorld extends Application
     private Pane background;
     private VBox vBox;
 
-    //Index of the x-axis in the line chart
-    private int index = 1;
-
-
 
     @Override
     public void start(Stage stage) throws Exception {
+
+        DiseaseChart diseaseChart = createChart();
+
         background = new Pane();
         vBox = new VBox();
+
         stage.setTitle("Coronavirus");
         background.setPrefSize(PANE_WIDTH, PANE_HEIGHT);
+
+
+        vBox.getChildren().addAll(background, diseaseChart);
+        Scene scene = new Scene(vBox);
+
+        stage.setScene(scene);
+        stage.show();
 
         //Add all persons in the simulation
         background.getChildren().addAll(populate());
@@ -52,13 +82,13 @@ public class MyWorld extends Application
             @Override
             public void run() {
                 //Run while there is someone still infected
-                while (Person.isSimulating()){
+                while (Person.isSimulating()) {
                     try {
                         TimeUnit.SECONDS.sleep(1);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                   // updateValues();
+                    diseaseChart.updateValues(populationList);
                 }
             }
         });
@@ -66,19 +96,36 @@ public class MyWorld extends Application
     }
 
 
-
     /**
      * Populate the world based on the screen size
      * and defined population
+     *
+     * @return populationList a list of the population
      */
-    private ArrayList<Person> populate(){
-        list = new ArrayList<>();
-        for(int i = 0; i<POPULATION; i++){
-            list.add(new Person(background));
+    private ArrayList<Person> populate() {
+        populationList = new ArrayList<>();
+        for (int i = 0; i < POPULATION; i++) {
+            populationList.add(new Person(background));
         }
 
         //Infects the 1st guy, the bat eater
-        list.get(0).infect();
-        return list;
+        populationList.get(0).infect();
+        return populationList;
+    }
+
+    /**
+     * This method creates the Chart that will be displayed in the window
+     * @return DiseaseChart the chart of disease information
+     */
+    private DiseaseChart createChart() {
+        final NumberAxis xAxis = new NumberAxis();
+        final NumberAxis yAxis = new NumberAxis();
+        yAxis.setLabel("Number of people");
+        xAxis.setLabel("Time");
+
+        return new DiseaseChart(xAxis, yAxis);
+
     }
 }
+
+
