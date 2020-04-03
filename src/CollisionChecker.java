@@ -5,41 +5,64 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * This class checks if 2 persons are in contact so it can transmit the disease.
+ * Only checks every given time (1000ms for now). This is because in a really big population
+ * the processor lasts a relative long time to check all the collisions, this time is variable.
+ * So for keeping it constant we choose a default value that will be enough in the worst scenario. This value has to be
+ * chosen taking consideration the POPULATION and computer capacity.
+ *
+ * @author Oussama Rakye
+ * @author Sumeet Saini
+ */
 public class CollisionChecker extends Thread {
+    //Starts a new thread that runs parallel to the simulation
     @Override
     public synchronized void run() {
         while (Person.isSimulating()) {
+            //Time is mesured
             long start = System.currentTimeMillis();
-            LinkedHashMap<Rectangle, Person> linkedHashMap = new LinkedHashMap<>();
-            LinkedHashMap<Rectangle, Person> linkedHashMapCan = new LinkedHashMap<>();
+
+            //LinkedHashMaps with people infected and people who can still get the disease respectively
+            LinkedHashMap<Rectangle, Person> infectedPeople = new LinkedHashMap<>();
+            LinkedHashMap<Rectangle, Person> canGetInfectedPeople = new LinkedHashMap<>();
+
+            //New array that copies the contents to avoid concurrency error
             ArrayList<Person> personsWithIt = new ArrayList<>(Person.getPersonsWithDisease());
+            //We add all the persons with its newly created bounds in the LinkedHashMap
                 for (Person person : personsWithIt) {
-                    //Bounds of the person in form of a rectangle
+                    //This if is for security and checking that the person is not null
                     if(person != null) {
+                        //Bounds of the person in form of a rectangle
                         Rectangle bounds = new Rectangle(person.getLayoutX(), person.getLayoutY(), person.getRadius() * 2, person.getRadius() * 2);
-                        linkedHashMap.put(bounds, person);
+                        infectedPeople.put(bounds, person);
                     }
                 }
 
-
-            for (Person person : Person.getPersonsCanGetDisease()) {
+            //New array that copies the contents to avoid concurrency error
+            ArrayList<Person> personsWithoutIt = new ArrayList<>(Person.getPersonsCanGetDisease());
+            //We add all the persons with its newly created bounds in the LinkedHashMap
+            for (Person person : personsWithoutIt) {
                 //Bounds of the person in form of a rectangle
                 Rectangle bounds = new Rectangle(person.getLayoutX(), person.getLayoutY(), person.getRadius() * 2, person.getRadius() * 2);
-                linkedHashMapCan.put(bounds, person);
+                canGetInfectedPeople.put(bounds, person);
             }
 
-            while (linkedHashMap.size()>=1) {
-                Rectangle firstBounds = linkedHashMap.keySet().iterator().next();
-                Person firstPerson = linkedHashMapCan.get(firstBounds);
-                detectMeeting(linkedHashMapCan, firstBounds, firstPerson);
-                linkedHashMap.remove(firstBounds);
+            //For each infected person we check if he can contagion someone
+            while (infectedPeople.size()>=1) {
+                //Bounds of the first person
+                Rectangle firstBounds = infectedPeople.keySet().iterator().next();
+                Person firstPerson = canGetInfectedPeople.get(firstBounds);
+                detectMeeting(canGetInfectedPeople, firstBounds, firstPerson);
+                infectedPeople.remove(firstBounds);
             }
             MyWorld.updateValues();
             long waitedTime = System.currentTimeMillis()-start;
+            System.out.println(waitedTime);
 
             if (waitedTime<800){
                 try {
-                    TimeUnit.MILLISECONDS.sleep(1000-waitedTime);
+                    TimeUnit.MILLISECONDS.sleep(800-waitedTime);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

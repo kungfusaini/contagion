@@ -27,15 +27,15 @@ public class MyWorld extends Application {
     //List of all persons
     private ArrayList<Person> populationList;
 
-    //Create a person to access Static count methods
-    Person person = new Person();
-
     //Chart to display disease information
     private static DiseaseChart diseaseChart;
 
     //Size of the screen
     public static final int PANE_WIDTH = 1500;
     public static final int PANE_HEIGHT = 500;
+
+    //Percentage of pane occupied by people
+    public static final double PANE_OCCUPATION = 0.1;
 
     private Pane background;
     private VBox vBox;
@@ -95,9 +95,10 @@ public class MyWorld extends Application {
      * @return populationList a list of the population
      */
     private ArrayList<Person> populate() {
+        double radius = Math.sqrt((PANE_WIDTH*PANE_HEIGHT*PANE_OCCUPATION)/(POPULATION*3.14));
         populationList = new ArrayList<>();
         for (int i = 0; i < POPULATION; i++) {
-            populationList.add(new Person(background));
+            populationList.add(new Person(background, radius));
         }
 
         //Infects the 1st guy, the bat eater

@@ -48,7 +48,7 @@ public class Person extends Circle {
      * Radius of the circle
      * You also have to change it in the super() in the constructor, it doesn't let reference this one
      */
-    private double radius = 1;
+    private double radius;
 
     /**
      * This object
@@ -65,19 +65,26 @@ public class Person extends Circle {
     private Timeline timeline;
     //Time that each person will move
     public static final int TIME_STEP_MILLISECONDS = 100;
+    //Quarantined population%
+    public static final double QUARANTINE = 0.9;
+    //The person doesn't move if quarantined
+    private boolean quarantined;
 
     /**
      * Creates the person, gets colocated in a random position of the background
      *
      * @param background where the person will be added to
      */
-    public Person(Pane background) {
-        super(1, Color.CADETBLUE);
+    public Person(Pane background, double radius) {
+        super(radius, Color.CADETBLUE);
+        this.radius=radius;
         this.relocate(random.nextInt(MyWorld.PANE_WIDTH + (int) radius * 3) - radius * 1.5, random.nextInt(MyWorld.PANE_HEIGHT + (int) radius * 3) - radius * 1.5);
         this.background = background;
         persons.add(this);
         personsCanGetDisease.add(this);
         person = this;
+
+        quarantined = (random.nextDouble()<QUARANTINE) ? true : false;
 
         counterHealthyPeople++;
 
@@ -109,40 +116,39 @@ public class Person extends Circle {
                 new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent t) {
-                        //move the person
-                        setLayoutX(getLayoutX() + dx);
-                        setLayoutY(getLayoutY() + dy);
+                        if(!quarantined) {
+                            //move the person
+                            setLayoutX(getLayoutX() + dx);
+                            setLayoutY(getLayoutY() + dy);
 
-                        //If the person reaches the left or right border make the step negative changing the speed
-                        if (getLayoutX() <= bounds.getMinX()) {
+                            //If the person reaches the left or right border make the step negative changing the speed
+                            if (getLayoutX() <= bounds.getMinX()) {
 
-                            dx = SPEED * random.nextDouble(); //Step on x or velocity
-                            dy = Math.sqrt(Math.pow(SPEED, 2) - Math.pow(dx, 2)); //Step on y
-                            if (random.nextBoolean()) dy *= -1;
+                                dx = SPEED * random.nextDouble(); //Step on x or velocity
+                                dy = Math.sqrt(Math.pow(SPEED, 2) - Math.pow(dx, 2)); //Step on y
+                                if (random.nextBoolean()) dy *= -1;
 
-                        } else if (getLayoutX() >= bounds.getMaxX()) {
-                            dx = -SPEED * random.nextDouble(); //Step on x or velocity
-                            dy = Math.sqrt(Math.pow(SPEED, 2) - Math.pow(dx, 2)); //Step on y
-                            if (random.nextBoolean()) dy *= -1;
+                            } else if (getLayoutX() >= bounds.getMaxX()) {
+                                dx = -SPEED * random.nextDouble(); //Step on x or velocity
+                                dy = Math.sqrt(Math.pow(SPEED, 2) - Math.pow(dx, 2)); //Step on y
+                                if (random.nextBoolean()) dy *= -1;
 
+                            }
+
+                            //If the ball reaches the bottom or top border make the step negative changing the speed
+                            if (getLayoutY() >= bounds.getMaxY()) {
+
+                                dy = -SPEED * random.nextDouble(); //Step on y or velocity
+                                dx = Math.sqrt(Math.pow(SPEED, 2) - Math.pow(dy, 2)); //Step on x
+                                if (random.nextBoolean()) dx *= -1;
+
+                            } else if (getLayoutY() <= bounds.getMinY()) {
+
+                                dy = SPEED * random.nextDouble(); //Step on y or velocity
+                                dx = Math.sqrt(Math.pow(SPEED, 2) - Math.pow(dy, 2)); //Step on x
+                                if (random.nextBoolean()) dx *= -1;
+                            }
                         }
-
-                        //If the ball reaches the bottom or top border make the step negative changing the speed
-                        if (getLayoutY() >= bounds.getMaxY()) {
-
-                            dy = -SPEED * random.nextDouble(); //Step on y or velocity
-                            dx = Math.sqrt(Math.pow(SPEED, 2) - Math.pow(dy, 2)); //Step on x
-                            if (random.nextBoolean()) dx *= -1;
-
-                        } else if (getLayoutY() <= bounds.getMinY()) {
-
-                            dy = SPEED * random.nextDouble(); //Step on y or velocity
-                            dx = Math.sqrt(Math.pow(SPEED, 2) - Math.pow(dy, 2)); //Step on x
-                            if (random.nextBoolean()) dx *= -1;
-                        }
-
-                        //Check if has met another person during the meeting
-                        //detectMeeting();
 
                         //If this person has a disease, increase by one the longitude of it
                         if (disease != null) {
