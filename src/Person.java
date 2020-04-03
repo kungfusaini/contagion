@@ -23,6 +23,8 @@ import java.util.Random;
 public class Person extends Circle {
     //Array that contains all persons
     private static ArrayList<Person> persons = new ArrayList<>();
+    //Array that contains all persons with the disease
+    private static ArrayList<Person> personsWithDisease = new ArrayList<>();
     //Boolean that's true while simulating
     private static boolean simulating = true;
     //Counters
@@ -43,7 +45,7 @@ public class Person extends Circle {
      * Radius of the circle
      * You also have to change it in the super() in the constructor, it doesn't let reference this one
      */
-    private double radius = 2;
+    private double radius = 1;
 
     /**
      * This object
@@ -59,7 +61,7 @@ public class Person extends Circle {
     //Animation, it adds the movement to the persons
     private Timeline timeline;
     //Time that each person will move
-    private static final int TIME_STEP_MILLISECONDS = 100;
+    public static final int TIME_STEP_MILLISECONDS = 100;
 
     /**
      * Creates the person, gets colocated in a random position of the background
@@ -67,7 +69,7 @@ public class Person extends Circle {
      * @param background where the person will be added to
      */
     public Person(Pane background) {
-        super(2, Color.CADETBLUE);
+        super(1, Color.CADETBLUE);
         this.relocate(random.nextInt(MyWorld.PANE_WIDTH + (int) radius * 3) - radius * 1.5, random.nextInt(MyWorld.PANE_HEIGHT + (int) radius * 3) - radius * 1.5);
         this.background = background;
         persons.add(this);
@@ -135,7 +137,7 @@ public class Person extends Circle {
                         }
 
                         //Check if has met another person during the meeting
-                        detectMeeting();
+                        //detectMeeting();
 
                         //If this person has a disease, increase by one the longitude of it
                         if (disease != null) {
@@ -236,6 +238,7 @@ public class Person extends Circle {
      * Creates a new disease for this person and increases the counter of infected people
      */
     public void infect() {
+        personsWithDisease.add(this);
         counterInfectedPeople++;
         disease = new Disease();
         //Set the person color to red
@@ -286,5 +289,13 @@ public class Person extends Circle {
 
     public static int getDead() {
         return counterDeadPeople;
+    }
+
+    public static ArrayList<Person> getPersons() {
+        return persons;
+    }
+
+    public static ArrayList<Person> getPersonsWithDisease() {
+        return personsWithDisease;
     }
 }
