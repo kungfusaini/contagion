@@ -22,7 +22,7 @@ public class MyWorld extends Application {
     //Population of the simulation.
     //Note: if you increase the number of the population you might have to increase TIME_STEP_MILLISECONDS, so
     //your computer can handle it
-    private static final int POPULATION = 5000;
+    private static final int POPULATION = 10000;
 
     //List of all persons
     private ArrayList<Person> populationList;
