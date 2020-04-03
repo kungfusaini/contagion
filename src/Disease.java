@@ -34,6 +34,10 @@ public class Disease {
         return --infectionRemaining;
     }
 
+    public int getInfectionRemaining(){
+        return infectionRemaining;
+    }
+
     /**
      * @return true if the disease kills the person, false otherwise
      */

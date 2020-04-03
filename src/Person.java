@@ -25,12 +25,15 @@ public class Person extends Circle {
     private static ArrayList<Person> persons = new ArrayList<>();
     //Array that contains all persons with the disease
     private static ArrayList<Person> personsWithDisease = new ArrayList<>();
+    //Array that contains all persons with the disease
+    private static ArrayList<Person> personsCanGetDisease = new ArrayList<>();
     //Boolean that's true while simulating
     private static boolean simulating = true;
     //Counters
     private static int counterInfectedPeople;
     private static int counterRecoveredPeople;
     private static int counterDeadPeople;
+    private static int counterHealthyPeople;
 
     //Pane where it will be added to
     private Pane background;
@@ -73,7 +76,10 @@ public class Person extends Circle {
         this.relocate(random.nextInt(MyWorld.PANE_WIDTH + (int) radius * 3) - radius * 1.5, random.nextInt(MyWorld.PANE_HEIGHT + (int) radius * 3) - radius * 1.5);
         this.background = background;
         persons.add(this);
+        personsCanGetDisease.add(this);
         person = this;
+
+        counterHealthyPeople++;
 
         //Sets the speed. The module will be equal to 6, with a random it can be positive or negative
         dx = SPEED * random.nextDouble(); //Step on x or velocity
@@ -103,7 +109,6 @@ public class Person extends Circle {
                 new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent t) {
-
                         //move the person
                         setLayoutX(getLayoutX() + dx);
                         setLayoutY(getLayoutY() + dy);
@@ -155,9 +160,7 @@ public class Person extends Circle {
      * Decides what will happen once the disease has arrived to its last day
      */
     private void finalDisease() {
-        //This person won't be able to get infected gain
-        setCantGetInfected();
-        counterInfectedPeople--;
+        personsWithDisease.remove(this);
         //Checks if this person survives according to the disease class
         if (disease.getIsDead()) {
             alive = false;
@@ -198,51 +201,20 @@ public class Person extends Circle {
     }
 
     /**
-     * This class checks if has met someone during the movement.
-     * If some of this two has the disease, this person will infect the other one
-     */
-    private void detectMeeting() {
-        //Bounds of the person in form of a rectangle
-        Rectangle bounds = new Rectangle(getLayoutX(), getLayoutY(), radius * 2, radius * 2);
-
-        //Check if has met any person of all of them
-        for (Person personC : persons) {
-            //As this person is also in the arrayList, check that we are not comparing him with himself
-            if (personC != person) {
-
-                //Bounds of the other person
-                Rectangle personCB = new Rectangle(personC.getLayoutX(), personC.getLayoutY(), radius * 2, radius * 2);
-                //Checks if this person and the other one are close enough
-                if (personCB.intersects(bounds.getLayoutBounds())) {
-                    /**
-                     * Check if only one of them has the disease
-                     *
-                     * Note: ^  is an XOR, meaning that it is true when only ONE is true
-                     */
-                    if ((disease != null) ^ (personC.getDisease() != null)) {
-                        //If this person doesn't have the disease, this person gets it, otherwise the other person will.
-                        if (disease == null) {
-                            if (canGetInfected)
-                                infect();
-                        } else {
-                            if (personC.isCanGetInfected())
-                                personC.infect();
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
      * Creates a new disease for this person and increases the counter of infected people
      */
     public void infect() {
-        personsWithDisease.add(this);
-        counterInfectedPeople++;
-        disease = new Disease();
-        //Set the person color to red
-        this.setFill(javafx.scene.paint.Color.rgb(245,6,0));
+        if(canGetInfected) {
+            //This person won't be able to get infected gain
+            setCantGetInfected();
+            counterHealthyPeople--;
+            personsWithDisease.add(this);
+            personsCanGetDisease.remove(this);
+            counterInfectedPeople++;
+            disease = new Disease();
+            //Set the person color to red
+            this.setFill(javafx.scene.paint.Color.rgb(245, 6, 0));
+        }
     }
 
     /**
@@ -297,5 +269,15 @@ public class Person extends Circle {
 
     public static ArrayList<Person> getPersonsWithDisease() {
         return personsWithDisease;
+    }
+
+    public static ArrayList<Person> getPersonsCanGetDisease() {
+        return personsCanGetDisease;
+    }
+
+    public static String getTotalPeople(){
+
+        return "D: " + counterDeadPeople + "   H: " + counterHealthyPeople + "   I: " + counterInfectedPeople + "   R: " + counterRecoveredPeople + "   T: " +
+                (counterRecoveredPeople+counterInfectedPeople+counterHealthyPeople+counterDeadPeople);
     }
 }

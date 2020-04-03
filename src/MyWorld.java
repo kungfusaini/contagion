@@ -31,7 +31,7 @@ public class MyWorld extends Application {
     Person person = new Person();
 
     //Chart to display disease information
-    private DiseaseChart diseaseChart;
+    private static DiseaseChart diseaseChart;
 
     //Size of the screen
     public static final int PANE_WIDTH = 1500;
@@ -44,7 +44,7 @@ public class MyWorld extends Application {
     @Override
     public void start(Stage stage) throws Exception {
 
-        DiseaseChart diseaseChart = createChart();
+        diseaseChart = createChart();
 
         background = new Pane();
         vBox = new VBox();
@@ -63,24 +63,28 @@ public class MyWorld extends Application {
         background.getChildren().addAll(populate());
 
         //Create a new thread that updates the chart every 1 second
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //Run while there is someone still infected
-                while (Person.isSimulating()) {
-                    try {
-                        TimeUnit.SECONDS.sleep(1);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    diseaseChart.updateValues(Person.getInfected(), Person.getRecovered(), Person.getDead());
-                }
-            }
-        });
-        thread.start();
+//        Thread thread = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                //Run while there is someone still infected
+//                while (Person.isSimulating()) {
+//                    try {
+//                        TimeUnit.SECONDS.sleep(1);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                    diseaseChart.updateValues(Person.getInfected(), Person.getRecovered(), Person.getDead());
+//                }
+//            }
+//        });
+//        thread.start();
 
         CollisionChecker collisionChecker = new CollisionChecker();
         collisionChecker.start();
+    }
+
+    public static void updateValues(){
+        diseaseChart.updateValues(Person.getInfected(), Person.getRecovered(), Person.getDead());
     }
 
 
@@ -105,7 +109,7 @@ public class MyWorld extends Application {
      * This method creates the Chart that will be displayed in the window
      * @return DiseaseChart the chart of disease information
      */
-    private DiseaseChart createChart() {
+    private static DiseaseChart createChart() {
         final NumberAxis xAxis = new NumberAxis();
         final NumberAxis yAxis = new NumberAxis();
         yAxis.setLabel("Number of people");
