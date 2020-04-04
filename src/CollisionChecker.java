@@ -1,7 +1,6 @@
 import javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -52,8 +51,7 @@ public class CollisionChecker extends Thread {
             while (infectedPeople.size()>=1) {
                 //Bounds of the first person
                 Rectangle firstBounds = infectedPeople.keySet().iterator().next();
-                Person firstPerson = canGetInfectedPeople.get(firstBounds);
-                detectMeeting(canGetInfectedPeople, firstBounds, firstPerson);
+                detectMeeting(canGetInfectedPeople, firstBounds);
                 infectedPeople.remove(firstBounds);
             }
             MyWorld.updateValues();
@@ -75,13 +73,10 @@ public class CollisionChecker extends Thread {
      * This class checks if has met someone during the movement.
      * If some of this two has the disease, this person will infect the other one
      */
-    private void detectMeeting(LinkedHashMap<Rectangle, Person> linkedHashMapCan, Rectangle firstBounds, Person firstPerson) {
-        Iterator iterator = linkedHashMapCan.keySet().iterator();
+    private void detectMeeting(LinkedHashMap<Rectangle, Person> linkedHashMapCan, Rectangle firstBounds) {
         //System.out.println(iterator.next());
 
-        while (iterator.hasNext()) {
-            Rectangle secondBounds = (Rectangle) iterator.next();
-
+        for (Rectangle secondBounds : linkedHashMapCan.keySet()) {
             if (secondBounds.intersects(firstBounds.getLayoutBounds())) {
                 Person secondPerson = linkedHashMapCan.get(secondBounds);
                 secondPerson.infect(false);

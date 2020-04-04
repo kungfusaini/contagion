@@ -6,8 +6,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
-
 
 /**
  * This class creates the pane where simulation will be hold
@@ -22,32 +20,28 @@ public class MyWorld extends Application {
     //Population of the simulation.
     //Note: if you increase the number of the population you might have to increase TIME_STEP_MILLISECONDS, so
     //your computer can handle it
-    public static final int POPULATION = 10000;
-
-    //List of all persons
-    private ArrayList<Person> populationList;
+    static final int POPULATION = 10000;
 
     //Chart to display disease information
     private static DiseaseChart diseaseChart;
 
     //Size of the screen
-    public static final int PANE_WIDTH = 1500;
-    public static final int PANE_HEIGHT = 500;
+    static final int PANE_WIDTH = 1500;
+    static final int PANE_HEIGHT = 500;
 
     //Percentage of pane occupied by people
-    public static final double PANE_OCCUPATION = 0.1;
+    private static final double PANE_OCCUPATION = 0.1;
 
     private Pane background;
-    private VBox vBox;
 
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
 
         diseaseChart = createChart();
 
         background = new Pane();
-        vBox = new VBox();
+        VBox vBox = new VBox();
 
         stage.setTitle("Coronavirus");
         background.setPrefSize(PANE_WIDTH, PANE_HEIGHT);
@@ -83,7 +77,7 @@ public class MyWorld extends Application {
         collisionChecker.start();
     }
 
-    public static void updateValues(){
+    static void updateValues(){
         diseaseChart.updateValues(Person.getInfected(), Person.getRecovered(), Person.getDead());
     }
 
@@ -96,7 +90,8 @@ public class MyWorld extends Application {
      */
     private ArrayList<Person> populate() {
         double radius = Math.sqrt((PANE_WIDTH*PANE_HEIGHT*PANE_OCCUPATION)/(POPULATION*3.14));
-        populationList = new ArrayList<>();
+        //List of all persons
+        ArrayList<Person> populationList = new ArrayList<>();
         for (int i = 0; i < POPULATION; i++) {
             populationList.add(new Person(background, radius));
         }

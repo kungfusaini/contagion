@@ -6,7 +6,6 @@ import javafx.geometry.Bounds;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -20,7 +19,7 @@ import java.util.Random;
  * @version 2.1
  */
 
-public class Person extends Circle {
+class Person extends Circle {
     //Array that contains all persons
     private static ArrayList<Person> persons = new ArrayList<>();
     //Array that contains all persons with the disease
@@ -44,29 +43,19 @@ public class Person extends Circle {
     private double dy;
     //Module of the speed of the person
     private static final double SPEED = 6;
-    /**
-     * Radius of the circle
-     * You also have to change it in the super() in the constructor, it doesn't let reference this one
-     */
-    private double radius;
 
-    /**
-     * This object
-     * Has to be added here, otherwise it wouldn/t be possible to check collision
-     */
-    private Person person;
     //The disease, will be null if the person is healthy/recovered
     private Disease disease;
     //Once has passes the disease won't b able to get it again
     private boolean canGetInfected = true;
     //Boolean to mark if this person is alive
-    private boolean alive = true;
+    private boolean alive;
     //Animation, it adds the movement to the persons
     private Timeline timeline;
     //Time that each person will move
-    public static final int TIME_STEP_MILLISECONDS = 100;
+    private static final int TIME_STEP_MILLISECONDS = 100;
     //Quarantined population%
-    public static final double QUARANTINE = 0;
+    private static final double QUARANTINE = 0;
     //The person doesn't move if quarantined
     private boolean quarantined;
 
@@ -75,16 +64,16 @@ public class Person extends Circle {
      *
      * @param background where the person will be added to
      */
-    public Person(Pane background, double radius) {
+    Person(Pane background, double radius) {
         super(radius, Color.CADETBLUE);
-        this.radius=radius;
         this.relocate(random.nextInt(MyWorld.PANE_WIDTH + (int) radius * 3) - radius * 1.5, random.nextInt(MyWorld.PANE_HEIGHT + (int) radius * 3) - radius * 1.5);
         this.background = background;
         persons.add(this);
         personsCanGetDisease.add(this);
-        person = this;
 
-        quarantined = (random.nextDouble()<QUARANTINE) ? true : false;
+        alive = true;
+
+        quarantined = random.nextDouble() < QUARANTINE;
 
         counterHealthyPeople++;
 
@@ -98,12 +87,6 @@ public class Person extends Circle {
         addMovement();
     }
 
-    //Empty constructor for test Person
-    public Person()
-    {
-        //do nothing
-    }
-
     /**
      * Makes the person move/act
      */
@@ -113,48 +96,45 @@ public class Person extends Circle {
 
         //Start of the animation with the predefined time
         timeline = new Timeline(new KeyFrame(Duration.millis(TIME_STEP_MILLISECONDS),
-                new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(ActionEvent t) {
-                        if(!quarantined) {
-                            //move the person
-                            setLayoutX(getLayoutX() + dx);
-                            setLayoutY(getLayoutY() + dy);
+                t -> {
+                    if(!quarantined) {
+                        //move the person
+                        setLayoutX(getLayoutX() + dx);
+                        setLayoutY(getLayoutY() + dy);
 
-                            //If the person reaches the left or right border make the step negative changing the speed
-                            if (getLayoutX() <= bounds.getMinX()) {
+                        //If the person reaches the left or right border make the step negative changing the speed
+                        if (getLayoutX() <= bounds.getMinX()) {
 
-                                dx = SPEED * random.nextDouble(); //Step on x or velocity
-                                dy = Math.sqrt(Math.pow(SPEED, 2) - Math.pow(dx, 2)); //Step on y
-                                if (random.nextBoolean()) dy *= -1;
+                            dx = SPEED * random.nextDouble(); //Step on x or velocity
+                            dy = Math.sqrt(Math.pow(SPEED, 2) - Math.pow(dx, 2)); //Step on y
+                            if (random.nextBoolean()) dy *= -1;
 
-                            } else if (getLayoutX() >= bounds.getMaxX()) {
-                                dx = -SPEED * random.nextDouble(); //Step on x or velocity
-                                dy = Math.sqrt(Math.pow(SPEED, 2) - Math.pow(dx, 2)); //Step on y
-                                if (random.nextBoolean()) dy *= -1;
+                        } else if (getLayoutX() >= bounds.getMaxX()) {
+                            dx = -SPEED * random.nextDouble(); //Step on x or velocity
+                            dy = Math.sqrt(Math.pow(SPEED, 2) - Math.pow(dx, 2)); //Step on y
+                            if (random.nextBoolean()) dy *= -1;
 
-                            }
-
-                            //If the ball reaches the bottom or top border make the step negative changing the speed
-                            if (getLayoutY() >= bounds.getMaxY()) {
-
-                                dy = -SPEED * random.nextDouble(); //Step on y or velocity
-                                dx = Math.sqrt(Math.pow(SPEED, 2) - Math.pow(dy, 2)); //Step on x
-                                if (random.nextBoolean()) dx *= -1;
-
-                            } else if (getLayoutY() <= bounds.getMinY()) {
-
-                                dy = SPEED * random.nextDouble(); //Step on y or velocity
-                                dx = Math.sqrt(Math.pow(SPEED, 2) - Math.pow(dy, 2)); //Step on x
-                                if (random.nextBoolean()) dx *= -1;
-                            }
                         }
 
-                        //If this person has a disease, increase by one the longitude of it
-                        if (disease != null) {
-                            //If it has finished, call method finalDisease();
-                            finalDisease();
+                        //If the ball reaches the bottom or top border make the step negative changing the speed
+                        if (getLayoutY() >= bounds.getMaxY()) {
+
+                            dy = -SPEED * random.nextDouble(); //Step on y or velocity
+                            dx = Math.sqrt(Math.pow(SPEED, 2) - Math.pow(dy, 2)); //Step on x
+                            if (random.nextBoolean()) dx *= -1;
+
+                        } else if (getLayoutY() <= bounds.getMinY()) {
+
+                            dy = SPEED * random.nextDouble(); //Step on y or velocity
+                            dx = Math.sqrt(Math.pow(SPEED, 2) - Math.pow(dy, 2)); //Step on x
+                            if (random.nextBoolean()) dx *= -1;
                         }
+                    }
+
+                    //If this person has a disease, increase by one the longitude of it
+                    if (disease != null) {
+                        //If it has finished, call method finalDisease();
+                        finalDisease();
                     }
                 }));
         timeline.setCycleCount(Timeline.INDEFINITE);        //Make the animation run without a limit number of times
@@ -208,14 +188,14 @@ public class Person extends Circle {
     /**
      * @return true if it is still simulating, false otherwise.
      */
-    public static boolean isSimulating(){
+    static boolean isSimulating(){
         return simulating;
     }
 
     /**
      * Creates a new disease for this person and increases the counter of infected people
      */
-    public void infect(boolean getsInfected) {
+    void infect(boolean getsInfected) {
         if(canGetInfected) {
             if(random.nextDouble()<Disease.INFECTION_RATE || getsInfected) {
                 //This person won't be able to get infected gain
@@ -231,67 +211,67 @@ public class Person extends Circle {
         }
     }
 
-    /**
-     * @return the disease of this person
-     */
-    public Disease getDisease() {
-        return disease;
-    }
+//    /**
+//     * @return the disease of this person
+//     */
+//    public Disease getDisease() {
+//        return disease;
+//    }
 
-    /**
-     * @return true if this person can get infected, false otherwise
-     */
-    public boolean isCanGetInfected() {
-        return canGetInfected;
-    }
+//    /**
+//     * @return true if this person can get infected, false otherwise
+//     */
+//    public boolean isCanGetInfected() {
+//        return canGetInfected;
+//    }
 
     /**
      * Set false if this person can't get infected again
      */
-    public void setCantGetInfected() {
+    private void setCantGetInfected() {
         this.canGetInfected = false;
     }
 
-    /**
-     * Checks the state of this person
-     * @return state state
-     */
-    public String getState(){
-        if(alive && !canGetInfected) return "recovered";
-        else if(alive && disease != null) return "infected";
-        else if(!alive) return "dead";
-        //Returns an empty string if this person is healthy and has never got the disease
-        else return "";
-    }
+//    /**
+//     * Checks the state of this person
+//     * @return state state
+//     */
+//    public String getState(){
+//        if(alive && !canGetInfected) return "recovered";
+//        else if(alive && disease != null) return "infected";
+//        else if(!alive) return "dead";
+//        //Returns an empty string if this person is healthy and has never got the disease
+//        else return "";
+//    }
 
-    public static int getInfected()
+    static int getInfected()
         {
             return counterInfectedPeople;
         }
 
-    public static int getRecovered() {
+    static int getRecovered() {
         return counterRecoveredPeople;
     }
 
-    public static int getDead() {
+    static int getDead() {
         return counterDeadPeople;
     }
 
-    public static ArrayList<Person> getPersons() {
-        return persons;
-    }
+//    public static ArrayList<Person> getPersons() {
+//        return persons;
+//    }
 
-    public static ArrayList<Person> getPersonsWithDisease() {
+    static ArrayList<Person> getPersonsWithDisease() {
         return personsWithDisease;
     }
 
-    public static ArrayList<Person> getPersonsCanGetDisease() {
+    static ArrayList<Person> getPersonsCanGetDisease() {
         return personsCanGetDisease;
     }
 
-    public static String getTotalPeople(){
-
-        return "D: " + counterDeadPeople + "   H: " + counterHealthyPeople + "   I: " + counterInfectedPeople + "   R: " + counterRecoveredPeople + "   T: " +
-                (counterRecoveredPeople+counterInfectedPeople+counterHealthyPeople+counterDeadPeople);
-    }
+//    public static String getTotalPeople(){
+//
+//        return "D: " + counterDeadPeople + "   H: " + counterHealthyPeople + "   I: " + counterInfectedPeople + "   R: " + counterRecoveredPeople + "   T: " +
+//                (counterRecoveredPeople+counterInfectedPeople+counterHealthyPeople+counterDeadPeople);
+//    }
 }

@@ -7,7 +7,7 @@ import javafx.scene.chart.XYChart;
 import java.util.ArrayList;
 
 
-public class DiseaseChart extends LineChart{
+class DiseaseChart extends LineChart{
 
     //Lines in the line chart
     private XYChart.Series seriesInfected;
@@ -17,7 +17,7 @@ public class DiseaseChart extends LineChart{
     //Index of the x-axis in the line chart
     private int index = 1;
 
-    public DiseaseChart(Axis axis, Axis axis2) {
+    DiseaseChart(Axis axis, Axis axis2) {
         super(axis, axis2);
 
         setTitle("Cases");
