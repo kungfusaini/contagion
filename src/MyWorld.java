@@ -17,20 +17,12 @@ import java.util.ArrayList;
 
 public class MyWorld extends Application {
 
-    //Population of the simulation.
-    //Note: if you increase the number of the population you might have to increase TIME_STEP_MILLISECONDS, so
-    //your computer can handle it
-    static final int POPULATION = 10000;
-
     //Chart to display disease information
     private static DiseaseChart diseaseChart;
 
     //Size of the screen
     static final int PANE_WIDTH = 1500;
     static final int PANE_HEIGHT = 500;
-
-    //Percentage of pane occupied by people
-    private static final double PANE_OCCUPATION = 0.1;
 
     private Pane background;
 
@@ -89,10 +81,10 @@ public class MyWorld extends Application {
      * @return populationList a list of the population
      */
     private ArrayList<Person> populate() {
-        double radius = Math.sqrt((PANE_WIDTH*PANE_HEIGHT*PANE_OCCUPATION)/(POPULATION*3.14));
+        double radius = Math.sqrt((PANE_WIDTH*PANE_HEIGHT*Constants.PANE_OCCUPATION)/(Constants.POPULATION*3.14));
         //List of all persons
         ArrayList<Person> populationList = new ArrayList<>();
-        for (int i = 0; i < POPULATION; i++) {
+        for (int i = 0; i < Constants.POPULATION; i++) {
             populationList.add(new Person(background, radius));
         }
 

@@ -41,8 +41,6 @@ class Person extends Circle {
     //Speed of the person in the map in both axis
     private double dx;
     private double dy;
-    //Module of the speed of the person
-    private static final double SPEED = 6;
 
     //The disease, will be null if the person is healthy/recovered
     private Disease disease;
@@ -52,10 +50,6 @@ class Person extends Circle {
     private boolean alive;
     //Animation, it adds the movement to the persons
     private Timeline timeline;
-    //Time that each person will move
-    private static final int TIME_STEP_MILLISECONDS = 100;
-    //Quarantined population%
-    private static final double QUARANTINE = 0;
     //The person doesn't move if quarantined
     private boolean quarantined;
 
@@ -73,14 +67,14 @@ class Person extends Circle {
 
         alive = true;
 
-        quarantined = random.nextDouble() < QUARANTINE;
+        quarantined = random.nextDouble() < Constants.QUARANTINE;
 
         counterHealthyPeople++;
 
         //Sets the speed. The module will be equal to 6, with a random it can be positive or negative
-        dx = SPEED * random.nextDouble(); //Step on x or velocity
+        dx = Constants.SPEED * random.nextDouble(); //Step on x or velocity
         if (random.nextBoolean()) dx *= -1;
-        dy = Math.sqrt(Math.pow(SPEED, 2) - Math.pow(dx, 2)); //Step on y
+        dy = Math.sqrt(Math.pow(Constants.SPEED, 2) - Math.pow(dx, 2)); //Step on y
         if (random.nextBoolean()) dy *= -1;
 
         //Starts the movement
@@ -95,7 +89,7 @@ class Person extends Circle {
         Bounds bounds = background.getBoundsInLocal();
 
         //Start of the animation with the predefined time
-        timeline = new Timeline(new KeyFrame(Duration.millis(TIME_STEP_MILLISECONDS),
+        timeline = new Timeline(new KeyFrame(Duration.millis(Constants.TIME_STEP_MILLISECONDS),
                 t -> {
                     if(!quarantined) {
                         //move the person
@@ -105,13 +99,13 @@ class Person extends Circle {
                         //If the person reaches the left or right border make the step negative changing the speed
                         if (getLayoutX() <= bounds.getMinX()) {
 
-                            dx = SPEED * random.nextDouble(); //Step on x or velocity
-                            dy = Math.sqrt(Math.pow(SPEED, 2) - Math.pow(dx, 2)); //Step on y
+                            dx = Constants.SPEED * random.nextDouble(); //Step on x or velocity
+                            dy = Math.sqrt(Math.pow(Constants.SPEED, 2) - Math.pow(dx, 2)); //Step on y
                             if (random.nextBoolean()) dy *= -1;
 
                         } else if (getLayoutX() >= bounds.getMaxX()) {
-                            dx = -SPEED * random.nextDouble(); //Step on x or velocity
-                            dy = Math.sqrt(Math.pow(SPEED, 2) - Math.pow(dx, 2)); //Step on y
+                            dx = -Constants.SPEED * random.nextDouble(); //Step on x or velocity
+                            dy = Math.sqrt(Math.pow(Constants.SPEED, 2) - Math.pow(dx, 2)); //Step on y
                             if (random.nextBoolean()) dy *= -1;
 
                         }
@@ -119,14 +113,14 @@ class Person extends Circle {
                         //If the ball reaches the bottom or top border make the step negative changing the speed
                         if (getLayoutY() >= bounds.getMaxY()) {
 
-                            dy = -SPEED * random.nextDouble(); //Step on y or velocity
-                            dx = Math.sqrt(Math.pow(SPEED, 2) - Math.pow(dy, 2)); //Step on x
+                            dy = -Constants.SPEED * random.nextDouble(); //Step on y or velocity
+                            dx = Math.sqrt(Math.pow(Constants.SPEED, 2) - Math.pow(dy, 2)); //Step on x
                             if (random.nextBoolean()) dx *= -1;
 
                         } else if (getLayoutY() <= bounds.getMinY()) {
 
-                            dy = SPEED * random.nextDouble(); //Step on y or velocity
-                            dx = Math.sqrt(Math.pow(SPEED, 2) - Math.pow(dy, 2)); //Step on x
+                            dy = Constants.SPEED * random.nextDouble(); //Step on y or velocity
+                            dx = Math.sqrt(Math.pow(Constants.SPEED, 2) - Math.pow(dy, 2)); //Step on x
                             if (random.nextBoolean()) dx *= -1;
                         }
                     }
@@ -157,7 +151,7 @@ class Person extends Circle {
         else {
             //Checks if this person survives according to the disease class
             double multiplier = 1;
-            multiplier += 2*Math.pow((double)counterInfectedPeople/MyWorld.POPULATION, 2);
+            multiplier += 2*Math.pow((double)counterInfectedPeople/Constants.POPULATION, 2);
             if (disease.getIsDead(multiplier)) {
                 alive = false;
                 //Stop moving
@@ -197,7 +191,7 @@ class Person extends Circle {
      */
     void infect(boolean getsInfected) {
         if(canGetInfected) {
-            if(random.nextDouble()<Disease.INFECTION_RATE || getsInfected) {
+            if(random.nextDouble()<Constants.INFECTION_RATE || getsInfected) {
                 //This person won't be able to get infected gain
                 setCantGetInfected();
                 counterHealthyPeople--;

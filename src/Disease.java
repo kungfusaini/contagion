@@ -8,12 +8,6 @@ import java.util.Random;
  */
 
 class Disease {
-    //The maximum time that the disease can last
-    private static final int INFECTION_LEGNTH = 18;
-    //The mortality rate
-    private static final double MORTALITY_RATE = 0.2;
-    //The infection rate
-    static final double INFECTION_RATE = 1;
     //The steps left for this disease
     private int infectionRemaining;
 
@@ -24,7 +18,7 @@ class Disease {
      */
     Disease(){
         random = new Random();
-        infectionRemaining = random.nextInt((INFECTION_LEGNTH - (INFECTION_LEGNTH -9)) + 1) + (INFECTION_LEGNTH -9)*20;    //There are 20 steps in one day
+        infectionRemaining = random.nextInt((Constants.INFECTION_LEGNTH - (Constants.INFECTION_LEGNTH -9)) + 1) + (Constants.INFECTION_LEGNTH -9)*20;    //There are 20 steps in one day
     }
 
 //    /**
@@ -44,7 +38,7 @@ class Disease {
     boolean getIsDead(double multiplier) {
         --infectionRemaining;
         if (infectionRemaining / 20 < 7) {
-            return random.nextDouble() < multiplier * MORTALITY_RATE / (7 * 20);
+            return random.nextDouble() < multiplier * Constants.MORTALITY_RATE / (7 * 20);
         }
         return false;
     }
