@@ -13,7 +13,7 @@ public class Disease {
     //The mortality rate
     private static final double MORTALITY_RATE = 0.2;
     //The infection rate
-    private static final double INFECTION_RATE = 0.8;
+    public static final double INFECTION_RATE = 0.2;
     //The steps left for this disease
     private int infectionRemaining;
 
@@ -31,7 +31,7 @@ public class Disease {
      * @return the duration left for the disease
      */
     public int step(){
-        return --infectionRemaining;
+        return infectionRemaining;
     }
 
     public int getInfectionRemaining(){
@@ -41,10 +41,13 @@ public class Disease {
     /**
      * @return true if the disease kills the person, false otherwise
      */
-    public boolean getIsDead() {
-        if(random.nextDouble()< MORTALITY_RATE)
-            return true;
-        else
-            return false;
+    public boolean getIsDead(double multiplier) {
+        --infectionRemaining;
+        if (infectionRemaining / 20 < 7) {
+            if (random.nextDouble() < multiplier*MORTALITY_RATE/(7*20))
+                return true;
+        }
+        return false;
     }
+
 }

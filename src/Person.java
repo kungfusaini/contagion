@@ -66,7 +66,7 @@ public class Person extends Circle {
     //Time that each person will move
     public static final int TIME_STEP_MILLISECONDS = 100;
     //Quarantined population%
-    public static final double QUARANTINE = 0.9;
+    public static final double QUARANTINE = 0;
     //The person doesn't move if quarantined
     private boolean quarantined;
 
@@ -153,8 +153,7 @@ public class Person extends Circle {
                         //If this person has a disease, increase by one the longitude of it
                         if (disease != null) {
                             //If it has finished, call method finalDisease();
-                            if (disease.step() <= 0)
-                                finalDisease();
+                            finalDisease();
                         }
                     }
                 }));
@@ -166,26 +165,33 @@ public class Person extends Circle {
      * Decides what will happen once the disease has arrived to its last day
      */
     private void finalDisease() {
-        personsWithDisease.remove(this);
-        //Checks if this person survives according to the disease class
-        if (disease.getIsDead()) {
-            alive = false;
-            //Stop moving
-            timeline.stop();
-            //Set the color of the person to black
-            setFill(Color.BLACK);
-            counterDeadPeople++;
-        } else {
-            //If survives set the color to green.
-            setFill(Color.rgb(20,240,0));
+        if(disease.getInfectionRemaining()<=0) {
+            personsWithDisease.remove(this);
+            setFill(Color.rgb(20, 240, 0));
             counterRecoveredPeople++;
+            disease = null;
+            if (--counterInfectedPeople <= 0) {
+                stopAll();
+            }
         }
-        //No longer has a disease
-        disease = null;
-
-        //Check if there is people still infected, otherwise stop everything.
-        if(--counterInfectedPeople <=0){
-            stopAll();
+        else {
+            //Checks if this person survives according to the disease class
+            double multiplier = 1;
+            multiplier += 2*Math.pow((double)counterInfectedPeople/MyWorld.POPULATION, 2);
+            if (disease.getIsDead(multiplier)) {
+                alive = false;
+                //Stop moving
+                timeline.stop();
+                //Set the color of the person to black
+                setFill(Color.BLACK);
+                counterDeadPeople++;
+                disease = null;
+                //Check if there is people still infected, otherwise stop everything.
+                if (--counterInfectedPeople <= 0) {
+                    stopAll();
+                }
+            }
+            //No longer has a disease
         }
     }
 
@@ -209,17 +215,19 @@ public class Person extends Circle {
     /**
      * Creates a new disease for this person and increases the counter of infected people
      */
-    public void infect() {
+    public void infect(boolean getsInfected) {
         if(canGetInfected) {
-            //This person won't be able to get infected gain
-            setCantGetInfected();
-            counterHealthyPeople--;
-            personsWithDisease.add(this);
-            personsCanGetDisease.remove(this);
-            counterInfectedPeople++;
-            disease = new Disease();
-            //Set the person color to red
-            this.setFill(javafx.scene.paint.Color.rgb(245, 6, 0));
+            if(random.nextDouble()<Disease.INFECTION_RATE || getsInfected) {
+                //This person won't be able to get infected gain
+                setCantGetInfected();
+                counterHealthyPeople--;
+                personsWithDisease.add(this);
+                personsCanGetDisease.remove(this);
+                counterInfectedPeople++;
+                disease = new Disease();
+                //Set the person color to red
+                this.setFill(javafx.scene.paint.Color.rgb(245, 6, 0));
+            }
         }
     }
 

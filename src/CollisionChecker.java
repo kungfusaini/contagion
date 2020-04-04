@@ -20,7 +20,7 @@ public class CollisionChecker extends Thread {
     @Override
     public synchronized void run() {
         while (Person.isSimulating()) {
-            //Time is mesured
+            //Time is measured
             long start = System.currentTimeMillis();
 
             //LinkedHashMaps with people infected and people who can still get the disease respectively
@@ -84,7 +84,7 @@ public class CollisionChecker extends Thread {
 
             if (secondBounds.intersects(firstBounds.getLayoutBounds())) {
                 Person secondPerson = linkedHashMapCan.get(secondBounds);
-                secondPerson.infect();
+                secondPerson.infect(false);
             }
         }
     }
