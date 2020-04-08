@@ -18,7 +18,7 @@ public class CollisionChecker extends Thread {
     //Starts a new thread that runs parallel to the simulation
     @Override
     public synchronized void run() {
-        while (Person.isSimulating()) {
+        while (true) {
             //Time is measured
             long start = System.currentTimeMillis();
 
@@ -62,7 +62,7 @@ public class CollisionChecker extends Thread {
                 try {
                     TimeUnit.MILLISECONDS.sleep(800-waitedTime);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+
                 }
             }
         }

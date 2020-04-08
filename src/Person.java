@@ -81,6 +81,12 @@ class Person extends Circle {
         addMovement();
     }
 
+    public static void resetValues() {
+        persons.clear();
+        personsCanGetDisease.clear();
+        personsWithDisease.clear();
+    }
+
     /**
      * Makes the person move/act
      */
@@ -178,6 +184,28 @@ class Person extends Circle {
             each.timeline.stop();
         }
     }
+
+    /**
+     * Pause moving all the persons
+     */
+    public static void pauseAll() {
+        simulating = false;
+        for(Person each : persons){
+            each.timeline.pause();
+        }
+    }
+
+    /**
+     * Stop moving all the persons
+     */
+    public static void resumeAll() {
+        simulating = false;
+        for(Person each : persons){
+            each.timeline.play();
+        }
+    }
+
+
 
     /**
      * @return true if it is still simulating, false otherwise.
