@@ -1,5 +1,8 @@
 Contagion!
 
+A GUI representation of how viruses can spread through a population. Humans are represented by dots, with their colour 
+indicating if they are healthy, infected or immune. 
+
 Code availble to edit, seperate GUI added.
 
  * Improvements:
